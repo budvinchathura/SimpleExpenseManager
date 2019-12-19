@@ -171,17 +171,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while(res.moveToNext()){
                 String accountNo = res.getString(0);
                 Date date = new Date();
-                ExpenseType expenseType = ExpenseType.INCOME;
+                ExpenseType expenseType = ExpenseType.valueOf(res.getString(2));
                 try {
                     date =  format.parse(res.getString(1));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                if(res.getString(2) == "INCOME"){
-                    expenseType = ExpenseType.INCOME;
-                }else if(res.getString(2) == "EXPENSE"){
-                    expenseType = ExpenseType.EXPENSE;
-                }
+//
+
                 double amount = res.getDouble(3);
                 transactionList.add(new Transaction(date,accountNo,expenseType,amount));
             }
