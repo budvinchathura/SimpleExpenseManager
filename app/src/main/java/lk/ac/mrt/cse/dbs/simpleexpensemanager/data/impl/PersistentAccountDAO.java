@@ -54,6 +54,25 @@ public class PersistentAccountDAO implements AccountDAO {
 
     @Override
     public void updateBalance(String accountNo, ExpenseType expenseType, double amount) throws InvalidAccountException {
+        if(accountNo ==null){
+            throw new InvalidAccountException("Invalid Account Number");
+
+        }
+        Account account = dbHelper.getAccount(accountNo);
+        double balance = account.getBalance();
+        if(expenseType == ExpenseType.INCOME){
+            account.setBalance(balance+amount);
+        }else if (expenseType == ExpenseType.EXPENSE){
+            account.setBalance(balance-amount);
+
+        }
+        if(account.getBalance()<0 ){
+            throw new InvalidAccountException("Insufficient credit");
+        }
+
+        else{
+            dbHelper.updateAccount(account);
+        }
 
     }
 }

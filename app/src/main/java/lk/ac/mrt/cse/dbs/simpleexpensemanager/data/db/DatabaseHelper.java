@@ -28,23 +28,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null, 2);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String ddl_q_1 = "create table "+TABLE_1+" (accountNo TEXT(50) PRIMARY KEY,bankName TEXT(50),accountHolderName TEXT(50),balance REAL) ";
-        String ddl_q_2 =" create table "+TABLE_2+" (accountNo TEXT(50) PRIMARY KEY,date date, expenseType TEXT(20),amount REAL);";
+        String ddl_q_2 =" create table "+TABLE_2+" (accountNo TEXT(50) ,date date, expenseType TEXT(20),amount REAL,FOREIGN KEY (accountNo) REFERENCES "+TABLE_1+"(accountNo))";
         sqLiteDatabase.execSQL(ddl_q_1);
         sqLiteDatabase.execSQL(ddl_q_2);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        String delete_q = ("DROP TABLE IF EXISTS "+TABLE_1+"; ");
-        delete_q+=" DROP TABLE IF EXISTS "+TABLE_2+";";
-        sqLiteDatabase.execSQL((delete_q));
+        String delete_q = "DROP TABLE IF EXISTS "+TABLE_1;
+        String delete_q_2 ="DROP TABLE IF EXISTS "+TABLE_2;
+        sqLiteDatabase.execSQL(delete_q);
+        sqLiteDatabase.execSQL(delete_q_2);
         onCreate(sqLiteDatabase);
     }
 
@@ -133,22 +134,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("expenseType",transaction.getExpenseType().toString());
         contentValues.put("amount",transaction.getAmount());
 
-        long result = db.insert(TABLE_2,null,contentValues);
-        if(result == -1){
+
+        long res = db.insert(TABLE_2,null,contentValues);
+        if(res == -1){
             return false;
         }else{
-            Account account = this.getAccount(transaction.getAccountNo());
-            if(transaction.getExpenseType() == ExpenseType.EXPENSE){
-                double val = account.getBalance();
-                val = val - transaction.getAmount();
-                account.setBalance(val);
-            }else if(transaction.getExpenseType() == ExpenseType.INCOME){
-                double val = account.getBalance();
-                val = val + transaction.getAmount();
-                account.setBalance(val);
-            }
-            return this.updateAccount(account);
+            return true;
         }
+
+
+
     }
 
     public ArrayList<Transaction> getTransactions(){
