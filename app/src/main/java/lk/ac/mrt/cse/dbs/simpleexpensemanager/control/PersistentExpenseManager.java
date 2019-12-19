@@ -7,6 +7,7 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.AccountDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.TransactionDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl.InMemoryTransactionDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl.PersistentAccountDAO;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl.PersistentTransactionDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
 
 public class PersistentExpenseManager extends ExpenseManager {
@@ -25,8 +26,8 @@ public class PersistentExpenseManager extends ExpenseManager {
     public void setup() throws ExpenseManagerException {
         /*** Begin generating dummy data for In-Memory implementation ***/
 
-        TransactionDAO inMemoryTransactionDAO = new InMemoryTransactionDAO();
-        setTransactionsDAO(inMemoryTransactionDAO);
+        TransactionDAO persistentTransactionDAO = new PersistentTransactionDAO(context);
+        setTransactionsDAO(persistentTransactionDAO);
 
         AccountDAO persistentAccountDAO = new PersistentAccountDAO(context);
         setAccountsDAO(persistentAccountDAO);
