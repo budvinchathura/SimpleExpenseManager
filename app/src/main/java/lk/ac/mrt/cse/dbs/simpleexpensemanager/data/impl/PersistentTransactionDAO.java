@@ -22,9 +22,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
     @Override
     public void logTransaction(Date date, String accountNo, ExpenseType expenseType, double amount) {
         Transaction transaction = new Transaction(date,accountNo,expenseType,amount);
-        if(accountNo == null){
-
-        }else{
+        if(accountNo != null){
             dbHelper.logTransaction(transaction);
         }
 
